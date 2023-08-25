@@ -220,9 +220,6 @@ if __name__=='__main__':
     LCD.fill_rect(0,120,160,10,0X8430)
     LCD.rect(0,120,160,10,0X8430)
 
-
-            
-            
     LCD.show()
     time.sleep(1)
     LCD.fill(0xFFFF)

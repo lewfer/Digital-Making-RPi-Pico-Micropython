@@ -5,7 +5,7 @@
 # Original code seems to set up a 480x160 buffer and use show_up()
 # to write to the top half of the screen and show_down() to the bottom half.
 # But this is too big for Pico W memory (maybe works with Pico).
-# Changed buffer to 480x100 and draw in 3 sections: show_up(), show_mid(), show_down()
+# Changed buffer to 480x106 and draw in 3 sections: show_up(), show_mid(), show_down()
 
 from machine import Pin,SPI,PWM
 import framebuf
@@ -32,7 +32,7 @@ class LCD_3inch5(framebuf.FrameBuffer):
         self.BLACK =   0x0000
         
         self.width = 480
-        self.height = 100 # 160
+        self.height = 106 # was 160
         
         self.cs = Pin(LCD_CS,Pin.OUT)
         self.rst = Pin(LCD_RST,Pin.OUT)
@@ -133,16 +133,24 @@ class LCD_3inch5(framebuf.FrameBuffer):
         self.write_data(0x28)
     def show_up(self):
         self.write_cmd(0x2A)
+
+        # Set top left x to 0
         self.write_data(0x00)
         self.write_data(0x00)
+        
+        # Set top right to 0x1df = 479
         self.write_data(0x01)
         self.write_data(0xdf)
         
         self.write_cmd(0x2B)
+
+        # Set top left y to 0
         self.write_data(0x00)
         self.write_data(0x00)
+
+        # Set top right y to 0x69 = 105
         self.write_data(0x00)
-        self.write_data(0x63)
+        self.write_data(0x69)
         
         self.write_cmd(0x2C)
         
@@ -154,16 +162,24 @@ class LCD_3inch5(framebuf.FrameBuffer):
         
     def show_mid(self):
         self.write_cmd(0x2A)
+
+        # Set top left x to 0
         self.write_data(0x00)
         self.write_data(0x00)
+
+        # Set top right to 0x1df = 479
         self.write_data(0x01)
         self.write_data(0xdf)
         
         self.write_cmd(0x2B)
+
+        # Set top left y to 0x6a = 106
         self.write_data(0x00)
-        self.write_data(0x64) 
+        self.write_data(0x6a) 
+
+        # Set top left y to 0xd3 = 211
         self.write_data(0x00)
-        self.write_data(0xc7)
+        self.write_data(0xd3)
         
         self.write_cmd(0x2C)
         
@@ -175,16 +191,24 @@ class LCD_3inch5(framebuf.FrameBuffer):
         
     def show_down(self):
         self.write_cmd(0x2A)
+
+        # Set top left x to 0
         self.write_data(0x00)
         self.write_data(0x00)
+
+        # Set top right to 0x1df = 479
         self.write_data(0x01)
         self.write_data(0xdf)
         
         self.write_cmd(0x2B)
+
+        # Set top left y to 0xd4 = 212
         self.write_data(0x00)
-        self.write_data(0xc8) 
+        self.write_data(0xd4) 
+
+        # Set top left y to 0x13e = 318
         self.write_data(0x01)
-        self.write_data(0x2b)
+        self.write_data(0x3e)
         
         self.write_cmd(0x2C)
         
@@ -276,6 +300,7 @@ if __name__=='__main__':
 
     LCD = LCD_3inch5()
     LCD.bl_ctrl(100)
+
     #color BRG
     LCD.fill(LCD.WHITE)
     LCD.fill_rect(10,10,460,80,LCD.RED)
